@@ -17,12 +17,19 @@ Jeweler::Tasks.new do |gem|
   gem.name = "toothbrush"
   gem.homepage = "http://github.com/rodrigomanhaes/toothbrush"
   gem.license = "MIT"
-  gem.summary = %Q{TODO: one-line summary of your gem}
-  gem.description = %Q{TODO: longer description of your gem}
+  gem.summary = %Q{Useful stuff for testing with Capybara}
+  gem.description = %Q{Useful stuff for testing with Capybara}
   gem.email = "rmanhaes@gmail.com"
   gem.authors = ["Rodrigo Manhães"]
   # dependencies defined in Gemfile
+  gem.add_development_dependency("rspec", "~> 2.8.0")
+  gem.add_development_dependency("rdoc", "~> 3.12")
+  gem.add_development_dependency("bundler", "~> 1.1.0")
+  gem.add_development_dependency("jeweler", "~> 1.8.3")
+  gem.add_development_dependency("simplecov", ">= 0")
+  gem.add_dependency("capybara", "~> 1.0")
 end
+
 Jeweler::RubygemsDotOrgTasks.new
 
 require 'rspec/core'
