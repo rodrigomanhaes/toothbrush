@@ -28,5 +28,12 @@ describe "Toothbrush" do
        }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
                         'expected #has_content?("1") to return true, got false')
     end
+
+    it 'supports tables without <thead> and <tbody>' do
+      ensure_table '#without-thead-tbody',
+        %w( 1 2),
+        [%w(3 4),
+         %w(5 6)]
+    end
   end
 end

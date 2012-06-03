@@ -11,7 +11,14 @@ module Toothbrush
               n += 1
             end
           rescue Capybara::ElementNotFound
-            break
+            begin
+              within("#{table_selector} tr th:nth-child(#{n})") do
+                columns[title] = n if page.has_content?(title)
+                n += 1
+              end
+            rescue Capybara::ElementNotFound
+              break
+            end
           end
         end
       end
@@ -20,8 +27,14 @@ module Toothbrush
 
       content.each_with_index do |celulas, index|
         celulas.each_with_index do |value, td_index|
-          within("#{table_selector} tbody tr:nth-child(#{index+1}) td:nth-child(#{columns[header[td_index]]})") do
-            page.should have_content(value)
+          begin
+            within("#{table_selector} tbody tr:nth-child(#{index+1}) td:nth-child(#{columns[header[td_index]]})") do
+              page.should have_content(value)
+            end
+          rescue Capybara::ElementNotFound
+            within("#{table_selector} tr:nth-child(#{index+2}) td:nth-child(#{columns[header[td_index]]})") do
+              page.should have_content(value)
+            end
           end
         end
       end
