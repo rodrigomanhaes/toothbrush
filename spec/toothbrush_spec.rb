@@ -35,5 +35,12 @@ describe "Toothbrush" do
         [%w(3 4),
          %w(5 6)]
     end
+
+    it 'supports tables without <th>' do
+      ensure_table '#without-th',
+        [%w(1 2),
+         %w(3 4),
+         %w(5 6)]
+    end
   end
 end
