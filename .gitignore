@@ -51,3 +51,5 @@ pkg
 Gemfile.lock
 
 .rbenv-version
+
+*.gem
