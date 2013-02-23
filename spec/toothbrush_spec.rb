@@ -42,5 +42,14 @@ describe "Toothbrush" do
          %w(3 4),
          %w(5 6)]
     end
+
+    it 'supports tables with different <th> and <td> number' do
+      ensure_table '#different-th-td-number',
+        ['Name', 'City'],
+        [
+          ['Americano', 'Campos', 'Destroy'],
+          ['Goytacaz', 'Campos', "You can't destroy this"]
+        ]
+    end
   end
 end
