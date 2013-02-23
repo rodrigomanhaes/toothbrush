@@ -2,6 +2,22 @@
 
 Useful stuff for testing with Capybara.
 
+== Install
+
+Add to your gemfile:
+
+    gem 'toothbrush', group: :test
+
+Add the file spec/support/toothbrush.rb with this content:
+
+    RSpec.configure do |config|
+      config.include Toothbrush::Helpers
+    end
+
+== Usage
+
+See the specs
+
 == Contributing to toothbrush
 
 * Check out the latest master to make sure the feature hasn't been implemented or the bug hasn't been fixed yet.
