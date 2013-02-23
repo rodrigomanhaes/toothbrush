@@ -16,7 +16,22 @@ Add the file spec/support/toothbrush.rb with this content:
 
 == Usage
 
-See the specs
+For now, the only feature is ``ensure_table``.
+
+In an integration/acceptance/whatever test using Capybara, you can ensure the
+contents of a table:
+
+    ensure_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+      %w(   Club     World  Libertadores  Brasileiro  Brasil  Carioca ),
+      [%w( Flamengo    1          1            6         2       32   ),
+       %w( Vasco       0          1            4         1       22   ),
+       %w( Fluminense  0          0            3         1       30   ),
+       %w( Botafogo    0          0            1         0       19   )]
+
+The arguments are the CSS selector for the table, an array with the table headers and
+a two-dimensional array including the table content. As the example above shows,
+code layout can be arranged in order to seem like a table.
+
 
 == Contributing to toothbrush
 
