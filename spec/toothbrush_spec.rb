@@ -26,7 +26,7 @@ describe "Toothbrush" do
            %w( Fluminense   0            0              3              1              30   ),
            %w( Botafogo     0            0              1              0              19   )]
        }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-                        'expected #has_content?("1") to return true, got false')
+                        'expected column 2, row 2 to have content "1"')
     end
 
     it 'supports tables without <thead> and <tbody>' do

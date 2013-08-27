@@ -10,12 +10,22 @@ module Toothbrush
       content.each_with_index do |row, row_index|
         row.each_with_index do |cell, cell_index|
           begin
-            within("#{table_selector} tbody tr:nth-child(#{row_index+1}) td:nth-child(#{cell_index+1})") do
-              page.should have_content(cell)
+            lines = all("#{table_selector} tbody tr")[row_index]
+            if lines
+              if !lines.all('td')[cell_index].has_content?(cell)
+                raise RSpec::Expectations::ExpectationNotMetError.new(
+                  'expected column %s, row %s to have content "%s"' % [
+                    cell_index+1, row_index+1, cell])
+              end
+            else
+              raise Capybara::ElementNotFound
             end
           rescue Capybara::ElementNotFound
-            within("#{table_selector} tr:nth-child(#{row_index+2}) td:nth-child(#{cell_index+1})") do
-              page.should have_content(cell)
+            lines = all("#{table_selector} tr")[row_index+1]
+            if lines
+              lines.all('td')[cell_index].should have_content(cell)
+            else
+              raise Capybara::ElementNotFound
             end
           end
         end
@@ -27,8 +37,11 @@ module Toothbrush
     def _ensure_table(selector, content)
       content.each_with_index do |row, row_index|
         row.each_with_index do |cell_data, cell_index|
-          within("#{selector} tr:nth-child(#{row_index + 1}) td:nth-child(#{cell_index + 1})") do
-            page.should have_content cell_data
+          lines = all("#{selector} tr")[row_index]
+          if lines
+            lines.all('td')[cell_index].should have_content cell_data
+          else
+            raise Capybara::ElementNotFound
           end
         end
       end
