@@ -1,3 +1,5 @@
+require 'rspec/expectations'
+
 RSpec::Matchers.define :include_table do |selector, *header_content|
   match do |actual|
     if header_content.count == 2
