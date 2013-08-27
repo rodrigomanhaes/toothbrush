@@ -1,50 +1,68 @@
-module Toothbrush
-  module Helpers
-    def ensure_table(table_selector, header_or_content, content = nil)
-      if content.nil?
-        return _ensure_table(table_selector, header_or_content)
-      else
-        header = header_or_content
-      end
+RSpec::Matchers.define :have_table do |selector, *header_content|
+  match do |actual|
+    if header_content.count == 2
+      header, content = header_content
+    else
+      header, content = nil, header_content[0]
+    end
+    @errors = []
 
-      content.each_with_index do |row, row_index|
-        row.each_with_index do |cell, cell_index|
-          begin
-            lines = all("#{table_selector} tbody tr")[row_index]
-            if lines
-              if !lines.all('td')[cell_index].has_content?(cell)
-                raise RSpec::Expectations::ExpectationNotMetError.new(
-                  'expected column %s, row %s to have content "%s"' % [
-                    cell_index+1, row_index+1, cell])
-              end
-            else
-              raise Capybara::ElementNotFound
-            end
-          rescue Capybara::ElementNotFound
-            lines = all("#{table_selector} tr")[row_index+1]
-            if lines
-              lines.all('td')[cell_index].should have_content(cell)
-            else
-              raise Capybara::ElementNotFound
-            end
-          end
-        end
-      end
+    check_selector = lambda do
+      check(:no_selector) { actual.has_selector?(selector) }
     end
 
-    private
-
-    def _ensure_table(selector, content)
-      content.each_with_index do |row, row_index|
-        row.each_with_index do |cell_data, cell_index|
-          lines = all("#{selector} tr")[row_index]
-          if lines
-            lines.all('td')[cell_index].should have_content cell_data
-          else
-            raise Capybara::ElementNotFound
-          end
-        end
+    check_header = lambda do
+      return true unless header
+      has_thead = lambda do
+        actual.has_selector?("#{selector} thead")
       end
+
+      check_header_content = lambda do |*header_selector|
+        sub_selector = header_selector.empty? ? '' : header_selector[0]
+        header_line = actual.all("#{selector} #{sub_selector} tr")[0].
+          all("th, td").map.with_index {|td, index|
+            td.has_content? header[index]
+          }.all?
+      end
+
+      (has_thead[] && check_header_content.('thead')) ||
+      (!has_thead[] && check_header_content[])
+    end
+
+    check_content = lambda do
+      has_tbody = lambda do
+        actual.has_selector?("#{selector} tbody")
+      end
+
+      check_body_content = lambda do |sub_selector_or_flag|
+        if sub_selector_or_flag.is_a? Symbol
+          sub_selector, exclude_first_line = '', sub_selector_or_flag == :exclude_first_line
+        else
+          sub_selector, exclude_first_line = sub_selector_or_flag, false
+        end
+        trs = actual.all("#{selector} #{sub_selector} tr").to_a
+        trs.shift if exclude_first_line
+        content.map.with_index {|row, row_index|
+          tds = trs[row_index].all('td')
+          row.map.with_index {|data, col_index|
+            tds[col_index].has_content? data
+          }.all?
+        }.compact.all?
+      end
+
+      (has_tbody[] && check_body_content.('tbody')) ||
+      (!has_tbody[] && check_body_content.(:exclude_first_line))
+    end
+
+    check_selector[] && check_header[] && check_content[]
+  end
+
+  def check(error)
+    if yield
+      true
+    else
+      @errors << error
+      false
     end
   end
 end
