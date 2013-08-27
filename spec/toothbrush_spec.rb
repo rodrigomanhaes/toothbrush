@@ -50,5 +50,14 @@ describe "Toothbrush" do
           ['Goytacaz', 'Campos', "You can't destroy this"]
         ]
     end
+
+    it 'supports partial table' do
+      page.should include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+          %w(    Club     World ),
+          [%w( Flamengo     1   ),
+           %w( Vasco        0   ),
+           %w( Fluminense   0   ),
+           %w( Botafogo     0   )]
+    end
   end
 end

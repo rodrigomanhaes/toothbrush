@@ -21,7 +21,7 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
       check_header_content = lambda do |*header_selector|
         sub_selector = header_selector.empty? ? '' : header_selector[0]
         actual.all("#{selector} #{sub_selector} tr")[0].
-          all("th, td").map.with_index {|td, index|
+          all("th, td").first(header.count).map.with_index {|td, index|
             td.has_content? header[index]
           }.all?
       end
