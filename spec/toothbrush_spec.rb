@@ -9,7 +9,7 @@ describe "Toothbrush" do
 
   describe 'ensures table content' do
     it 'correct table' do
-      ensure_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+      page.should have_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
         [   'Club',    'World', 'Libertadores', 'Brasileiro', 'Copa do Brasil', 'Carioca'],
         [%w( Flamengo     1            1              6              2              32   ),
          %w( Vasco        0            1              4              1              22   ),
@@ -19,32 +19,31 @@ describe "Toothbrush" do
 
     it 'vasco is not a world club champion' do
       expect {
-        ensure_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+        page.should have_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
           [   'Club',    'World', 'Libertadores', 'Brasileiro', 'Copa do Brasil', 'Carioca'],
           [%w( Flamengo     1            1              6              2              32   ),
            %w( Vasco        1            1              4              1              22   ),
            %w( Fluminense   0            0              3              1              30   ),
            %w( Botafogo     0            0              1              0              19   )]
-       }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-                        'expected column 2, row 2 to have content "1"')
+       }.to raise_error(RSpec::Expectations::ExpectationNotMetError)
     end
 
     it 'supports tables without <thead> and <tbody>' do
-      ensure_table '#without-thead-tbody',
+      page.should have_table '#without-thead-tbody',
         %w( 1 2),
         [%w(3 4),
          %w(5 6)]
     end
 
-    it 'supports tables without <th>' do
-      ensure_table '#without-th',
+    it 'supports tables without header' do
+      page.should have_table '#without-th',
         [%w(1 2),
          %w(3 4),
          %w(5 6)]
     end
 
     it 'supports tables with different <th> and <td> number' do
-      ensure_table '#different-th-td-number',
+      page.should have_table '#different-th-td-number',
         ['Name', 'City'],
         [
           ['Americano', 'Campos', 'Destroy'],
