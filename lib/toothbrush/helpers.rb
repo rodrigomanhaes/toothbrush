@@ -1,4 +1,4 @@
-RSpec::Matchers.define :have_table do |selector, *header_content|
+RSpec::Matchers.define :include_table do |selector, *header_content|
   match do |actual|
     if header_content.count == 2
       header, content = header_content.map(&:clone)

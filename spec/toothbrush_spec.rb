@@ -9,7 +9,7 @@ describe "Toothbrush" do
 
   describe 'ensures table content' do
     it 'correct table' do
-      page.should have_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+      page.should include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
         [   'Club',    'World', 'Libertadores', 'Brasileiro', 'Copa do Brasil', 'Carioca'],
         [%w( Flamengo     1            1              6              2              32   ),
          %w( Vasco        0            1              4              1              22   ),
@@ -19,7 +19,7 @@ describe "Toothbrush" do
 
     it 'vasco is not a world club champion' do
       expect {
-        page.should have_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+        page.should include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
           [   'Club',    'World', 'Libertadores', 'Brasileiro', 'Copa do Brasil', 'Carioca'],
           [%w( Flamengo     1            1              6              2              32   ),
            %w( Vasco        1            1              4              1              22   ),
@@ -29,21 +29,21 @@ describe "Toothbrush" do
     end
 
     it 'supports tables without <thead> and <tbody>' do
-      page.should have_table '#without-thead-tbody',
+      page.should include_table '#without-thead-tbody',
         %w( 1 2),
         [%w(3 4),
          %w(5 6)]
     end
 
     it 'supports tables without header' do
-      page.should have_table '#without-th',
+      page.should include_table '#without-th',
         [%w(1 2),
          %w(3 4),
          %w(5 6)]
     end
 
     it 'supports tables with different <th> and <td> number' do
-      page.should have_table '#different-th-td-number',
+      page.should include_table '#different-th-td-number',
         ['Name', 'City'],
         [
           ['Americano', 'Campos', 'Destroy'],
