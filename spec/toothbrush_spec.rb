@@ -59,5 +59,14 @@ describe "Toothbrush" do
            %w( Fluminense   0   ),
            %w( Botafogo     0   )]
     end
+
+    it 'does not care about column ordering' do
+      page.should include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+          %w(  World    Club    ),
+          [%w(   1    Flamengo  ),
+           %w(   0     Vasco    ),
+           %w(   0   Fluminense ),
+           %w(   0    Botafogo  )]
+    end
   end
 end
