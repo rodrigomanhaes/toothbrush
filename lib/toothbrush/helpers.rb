@@ -69,4 +69,17 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
 
     check_selector[] && check_header[] && check_content[]
   end
+
+  failure_message_for_should do |actual|
+    html_table_to_array = lambda do
+      header = actual.all("#{selector} thead tr th").map(&:text)
+      header = actual.all("#{selector} thead tr td").map(&:text) if header.empty?
+      body = actual.all("#{selector} tbody tr").map {|tr|
+        tr.all('td').map(&:text)
+      }
+      body.unshift(header) unless header.empty?
+      body.to_table(first_row_is_head: true).to_s
+    end
+    "expected to include table\n#{header_content[1].unshift(header_content[0]).to_table(first_row_is_head: true )}but found\n#{html_table_to_array.()}"
+  end
 end

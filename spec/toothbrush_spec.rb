@@ -25,7 +25,26 @@ describe "Toothbrush" do
            %w( Vasco        1            1              4              1              22   ),
            %w( Fluminense   0            0              3              1              30   ),
            %w( Botafogo     0            0              1              0              19   )]
-       }.to raise_error(RSpec::Expectations::ExpectationNotMetError)
+       }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
+"""expected to include table
++------------+-------+--------------+------------+----------------+---------+
+|    Club    | World | Libertadores | Brasileiro | Copa do Brasil | Carioca |
++------------+-------+--------------+------------+----------------+---------+
+| Flamengo   | 1     | 1            | 6          | 2              | 32      |
+| Vasco      | 1     | 1            | 4          | 1              | 22      |
+| Fluminense | 0     | 0            | 3          | 1              | 30      |
+| Botafogo   | 0     | 0            | 1          | 0              | 19      |
++------------+-------+--------------+------------+----------------+---------+
+but found
++------------+-------+--------------+------------+----------------+---------+
+|    Club    | World | Libertadores | Brasileiro | Copa do Brasil | Carioca |
++------------+-------+--------------+------------+----------------+---------+
+| Flamengo   | 1     | 1            | 6          | 2              | 32      |
+| Vasco      | 0     | 1            | 4          | 1              | 22      |
+| Fluminense | 0     | 0            | 3          | 1              | 30      |
+| Botafogo   | 0     | 0            | 1          | 0              | 19      |
++------------+-------+--------------+------------+----------------+---------+
+""")
     end
 
     it 'supports tables without <thead> and <tbody>' do

@@ -4,6 +4,8 @@ require 'rspec'
 require 'toothbrush'
 require 'capybara'
 require 'capybara/dsl'
+require 'pry-rails'
+require 'text-table'
 
 require File.join(File.dirname(__FILE__), 'dummy_app', 'app')
 Capybara.app = Sinatra::Application
