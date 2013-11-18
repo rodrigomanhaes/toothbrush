@@ -37,7 +37,7 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
       elsif has_header[]
         actual.all("#{selector} tr")[1..-1]
       else
-        actual.all("#{selector}")
+        actual.all("#{selector} tr")
       end
       body = body_rows.map {|tr|
         tr.all('td').map(&:text)
@@ -76,7 +76,6 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
         end
         trs = actual.all("#{selector} #{sub_selector} tr").to_a
         trs.shift if exclude_first_line
-        content.shift unless has_header[]
         content.map.with_index {|row, row_index|
           tds = trs[row_index].all('td')
           row.map.with_index {|data, col_index|
@@ -85,8 +84,13 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
         }.compact.all?
       end
 
-      (has_tbody[] && check_body_content.('tbody')) ||
-      (!has_tbody[] && check_body_content.(:exclude_first_line))
+      if has_tbody[]
+        check_body_content.('tbody')
+      elsif has_header[]
+        check_body_content.(:exclude_first_line)
+      else
+        check_body_content.('')
+      end
     end
 
     result = check_selector[] && check_header[] && check_content[]

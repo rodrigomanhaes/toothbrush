@@ -80,11 +80,35 @@ but found
      end
     end
 
-    it 'supports tables without header' do
-      page.should include_table '#without-th',
-        [%w(1 2),
-         %w(3 4),
-         %w(5 6)]
+    describe 'supports tables without header' do
+      it 'passing' do
+        page.should include_table '#without-th',
+          [%w(1 2),
+           %w(3 4),
+           %w(5 6)]
+      end
+
+      it 'failing' do
+        expect {
+          page.should include_table '#without-th',
+            [%w(1 2),
+             %w(3 4),
+             %w(6 6)]
+        }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
+"""expected to include table
++---+---+
+| 1 | 2 |
+| 3 | 4 |
+| 6 | 6 |
++---+---+
+but found
++---+---+
+| 1 | 2 |
+| 3 | 4 |
+| 5 | 6 |
++---+---+
+""")
+      end
     end
 
     it 'supports tables with different <th> and <td> number' do
