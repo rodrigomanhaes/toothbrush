@@ -111,13 +111,41 @@ but found
       end
     end
 
-    it 'supports tables with different <th> and <td> number' do
-      page.should include_table '#different-th-td-number',
-        ['Name', 'City'],
-        [
-          ['Americano', 'Campos', 'Destroy'],
-          ['Goytacaz', 'Campos', "You can't destroy this"]
-        ]
+    describe 'supports tables with different <th> and <td> number' do
+      it 'passing' do
+        page.should include_table '#different-th-td-number',
+          ['Name', 'City'],
+          [
+            ['Americano', 'Campos', 'Destroy'],
+            ['Goytacaz', 'Campos', "You can't destroy this"]
+          ]
+      end
+
+      it 'failing' do
+        expect {
+          page.should include_table '#different-th-td-number',
+            ['Name', 'Cidade'],
+            [
+              ['Americano', 'Campos', 'Destroy'],
+              ['Goytacaz', 'Campos', "You can't destroy this"]
+            ]
+        }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
+"""expected to include table
++-----------+--------+------------------------+
+|   Name    | Cidade |                        |
++-----------+--------+------------------------+
+| Americano | Campos | Destroy                |
+| Goytacaz  | Campos | You can't destroy this |
++-----------+--------+------------------------+
+but found
++-----------+--------+------------------------+
+|   Name    |  City  |                        |
++-----------+--------+------------------------+
+| Americano | Campos | Destroy                |
+| Goytacaz  | Campos | You can't destroy this |
++-----------+--------+------------------------+
+""")
+      end
     end
 
     it 'supports partial table' do

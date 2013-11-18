@@ -42,7 +42,10 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
       body = body_rows.map {|tr|
         tr.all('td').map(&:text)
       }
-      body.unshift(header) if header && !header.empty?
+      if header && !header.empty?
+        header << '' while header.size < body.first.size
+        body.unshift(header)
+      end
       body.to_table(first_row_is_head: has_header[]).to_s
     end
 
@@ -99,7 +102,10 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
         @message = "expected to have selector '#{selector}'"
       else
         expected_table = content.clone
-        expected_table.unshift(header) if header
+        if header
+          header << '' while header.size < expected_table.first.size
+          expected_table.unshift(header)
+        end
         @message = "expected to include table\n" +
           "#{expected_table.to_table(first_row_is_head: has_header[])}but found\n" +
           html_table_to_array.()
