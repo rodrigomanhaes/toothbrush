@@ -47,11 +47,37 @@ but found
 """)
     end
 
-    it 'supports tables without <thead> and <tbody>' do
-      page.should include_table '#without-thead-tbody',
-        %w( 1 2),
-        [%w(3 4),
-         %w(5 6)]
+    describe 'supports tables without <thead> and <tbody>' do
+      it 'passing' do
+        page.should include_table '#without-thead-tbody',
+          %w( 1 2),
+          [%w(3 4),
+           %w(5 6)]
+     end
+
+     it 'failing' do
+        expect {
+          page.should include_table '#without-thead-tbody',
+            %w( 1 2),
+            [%w(3 4),
+             %w(5 7)]
+         }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
+"""expected to include table
++---+---+
+| 1 | 2 |
++---+---+
+| 3 | 4 |
+| 5 | 7 |
++---+---+
+but found
++---+---+
+| 1 | 2 |
++---+---+
+| 3 | 4 |
+| 5 | 6 |
++---+---+
+""")
+     end
     end
 
     it 'supports tables without header' do

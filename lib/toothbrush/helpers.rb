@@ -21,7 +21,29 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
     end
 
     has_header = lambda do
-      has_tbody[] || actual.has_selector?("#{selector} tr th")
+      has_thead[] || actual.has_selector?("#{selector} tr th")
+    end
+
+    html_table_to_array = lambda do
+      if has_thead[]
+        header = actual.all("#{selector} thead tr th").map(&:text)
+        header = actual.all("#{selector} thead tr td").map(&:text) if header.empty?
+      elsif has_header[]
+        header = actual.first("#{selector} tr").all('th').map(&:text)
+        header = actual.first("#{selector} tr").all('td').map(&:text) if header.empty?
+      end
+      body_rows = if has_tbody[]
+        actual.all("#{selector} tbody tr")
+      elsif has_header[]
+        actual.all("#{selector} tr")[1..-1]
+      else
+        actual.all("#{selector}")
+      end
+      body = body_rows.map {|tr|
+        tr.all('td').map(&:text)
+      }
+      body.unshift(header) if header && !header.empty?
+      body.to_table(first_row_is_head: has_header[]).to_s
     end
 
     column_equivalence = {}
@@ -67,19 +89,22 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
       (!has_tbody[] && check_body_content.(:exclude_first_line))
     end
 
-    check_selector[] && check_header[] && check_content[]
+    result = check_selector[] && check_header[] && check_content[]
+    if !result
+      if !check_selector[]
+        @message = "expected to have selector '#{selector}'"
+      else
+        expected_table = content.clone
+        expected_table.unshift(header) if header
+        @message = "expected to include table\n" +
+          "#{expected_table.to_table(first_row_is_head: has_header[])}but found\n" +
+          html_table_to_array.()
+      end
+    end
+    result
   end
 
   failure_message_for_should do |actual|
-    html_table_to_array = lambda do
-      header = actual.all("#{selector} thead tr th").map(&:text)
-      header = actual.all("#{selector} thead tr td").map(&:text) if header.empty?
-      body = actual.all("#{selector} tbody tr").map {|tr|
-        tr.all('td').map(&:text)
-      }
-      body.unshift(header) unless header.empty?
-      body.to_table(first_row_is_head: true).to_s
-    end
-    "expected to include table\n#{header_content[1].unshift(header_content[0]).to_table(first_row_is_head: true )}but found\n#{html_table_to_array.()}"
+    @message
   end
 end
