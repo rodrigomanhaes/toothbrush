@@ -1,4 +1,5 @@
 require 'rspec/expectations'
+require 'text-table'
 
 RSpec::Matchers.define :include_table do |selector, *header_content|
   match do |actual|
