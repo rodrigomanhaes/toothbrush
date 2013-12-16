@@ -166,4 +166,24 @@ but found
            %w(   0    Botafogo  )]
     end
   end
+
+  it 'supports table having nothing inside' do
+    expect {
+      page.should include_table '#nothing-inside',
+         ['a'],
+        [['b'],
+         ['c']]
+     }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
+"""expected to include table
++---+
+| a |
++---+
+| b |
+| c |
++---+
+but found
+++
+++
+""")
+  end
 end
