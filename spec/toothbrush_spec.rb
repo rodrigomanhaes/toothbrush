@@ -4,12 +4,12 @@ describe "Toothbrush" do
   before(:each) { visit '/dummy' }
 
   it 'talks to the dummy app' do
-    page.should have_content "Hey, ho, let's go!"
+    expect(page).to have_content "Hey, ho, let's go!"
   end
 
   describe 'ensures table content' do
     it 'correct table' do
-      page.should include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+      expect(page).to include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
         [   'Club',    'World', 'Libertadores', 'Brasileiro', 'Copa do Brasil', 'Carioca'],
         [%w( Flamengo     1            1              6              2              32   ),
          %w( Vasco        0            1              4              1              22   ),
@@ -19,7 +19,7 @@ describe "Toothbrush" do
 
     it 'vasco is not a world club champion' do
       expect {
-        page.should include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+        expect(page).to include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
           [   'Club',    'World', 'Libertadores', 'Brasileiro', 'Copa do Brasil', 'Carioca'],
           [%w( Flamengo     1            1              6              2              32   ),
            %w( Vasco        1            1              4              1              22   ),
@@ -49,7 +49,7 @@ but found
 
     describe 'supports tables without <thead> and <tbody>' do
       it 'passing' do
-        page.should include_table '#without-thead-tbody',
+        expect(page).to include_table '#without-thead-tbody',
           %w( 1 2),
           [%w(3 4),
            %w(5 6)]
@@ -57,7 +57,7 @@ but found
 
      it 'failing' do
         expect {
-          page.should include_table '#without-thead-tbody',
+          expect(page).to include_table '#without-thead-tbody',
             %w( 1 2),
             [%w(3 4),
              %w(5 7)]
@@ -82,7 +82,7 @@ but found
 
     describe 'supports tables without header' do
       it 'passing' do
-        page.should include_table '#without-th',
+        expect(page).to include_table '#without-th',
           [%w(1 2),
            %w(3 4),
            %w(5 6)]
@@ -90,7 +90,7 @@ but found
 
       it 'failing' do
         expect {
-          page.should include_table '#without-th',
+          expect(page).to include_table '#without-th',
             [%w(1 2),
              %w(3 4),
              %w(6 6)]
@@ -113,7 +113,7 @@ but found
 
     describe 'supports tables with different <th> and <td> number' do
       it 'passing' do
-        page.should include_table '#different-th-td-number',
+        expect(page).to include_table '#different-th-td-number',
           ['Name', 'City'],
           [
             ['Americano', 'Campos', 'Destroy'],
@@ -123,7 +123,7 @@ but found
 
       it 'failing' do
         expect {
-          page.should include_table '#different-th-td-number',
+          expect(page).to include_table '#different-th-td-number',
             ['Name', 'Cidade'],
             [
               ['Americano', 'Campos', 'Destroy'],
@@ -149,7 +149,7 @@ but found
     end
 
     it 'supports partial table' do
-      page.should include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+      expect(page).to include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
           %w(    Club     World ),
           [%w( Flamengo     1   ),
            %w( Vasco        0   ),
@@ -158,7 +158,7 @@ but found
     end
 
     it 'does not care about column ordering' do
-      page.should include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
+      expect(page).to include_table '#football-clubs-from-rio-de-janeiro-and-their-honors',
           %w(  World    Club    ),
           [%w(   1    Flamengo  ),
            %w(   0     Vasco    ),
@@ -169,7 +169,7 @@ but found
 
   it 'supports table having nothing inside' do
     expect {
-      page.should include_table '#nothing-inside',
+      expect(page).to include_table '#nothing-inside',
          ['a'],
         [['b'],
          ['c']]

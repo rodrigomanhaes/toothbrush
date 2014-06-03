@@ -38,7 +38,7 @@ Gem::Specification.new do |s|
   s.summary = "Useful stuff for testing with Capybara"
 
   s.add_dependency('text-table')
-  s.add_development_dependency('rspec', '~> 2.0')
+  s.add_development_dependency('rspec', '>= 2.11.0')
   s.add_development_dependency('sinatra', '>= 0')
   s.add_development_dependency('capybara', '>= 1.0')
   s.add_development_dependency('pry-rails')

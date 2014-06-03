@@ -123,7 +123,11 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
     result
   end
 
-  failure_message_for_should do |actual|
+  class << self
+    alias :failure_message :failure_message_for_should
+  end unless respond_to? :failure_message
+
+  failure_message do |actual|
     @message
   end
 end
