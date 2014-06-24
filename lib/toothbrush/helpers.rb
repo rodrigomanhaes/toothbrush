@@ -4,7 +4,14 @@ require 'text-table'
 RSpec::Matchers.define :include_table do |selector, *header_content|
   match do |actual|
     if header_content.count == 2
-      expected_header, expected_content = header_content.map(&:clone)
+      header_or_content = header_content[0]
+      if header_or_content[0].is_a? Array
+        expected_content, expected_foot = header_content
+      else
+        expected_header, expected_content = header_content
+      end
+    elsif header_content.count == 3
+      expected_header, expected_content, expected_foot = header_content.map(&:clone)
     else
       expected_header, expected_content = nil, header_content[0].clone
     end
@@ -21,6 +28,10 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
       actual.has_selector?("#{selector} tbody")
     end
 
+    has_tfoot = lambda do
+      actual.has_selector?("#{selector} tfoot")
+    end
+
     has_header = lambda do
       has_thead[] || actual.has_selector?("#{selector} tr th")
     end
@@ -28,6 +39,8 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
     expected_has_header = lambda do
       expected_header && !expected_header.empty?
     end
+
+    html_foot = lambda { actual.all("#{selector} tfoot tr td").map(&:text) }
 
     html_table_to_array = lambda do
       if has_thead[]
@@ -50,7 +63,11 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
         header << '' while header.size < body_size
         body.unshift(header)
       end
-      body.to_table(first_row_is_head: has_header[]).to_s
+
+      body.push(html_foot[]) if has_tfoot[]
+
+      body.to_table(first_row_is_head: has_header[],
+        last_row_is_foot: has_tfoot[]).to_s
     end
 
     column_equivalence = {}
@@ -105,7 +122,13 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
       end
     end
 
-    result = check_selector[] && check_header[] && check_content[]
+    check_foot = lambda do
+      return true unless expected_foot
+      return false if expected_foot && !has_tfoot[]
+      html_foot[] == expected_foot
+    end
+
+    result = check_selector[] && check_header[] && check_content[] && check_foot[]
     if !result
       if !check_selector[]
         @message = "expected to have selector '#{selector}'"
@@ -115,8 +138,13 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
           expected_header << '' while expected_header.size < expected_table.first.size
           expected_table.unshift(expected_header)
         end
+
+        expected_table.push(expected_foot) if expected_foot
+
         @message = "expected to include table\n%sbut found\n%s" %
-          [expected_table.to_table(first_row_is_head: expected_has_header[]),
+          [expected_table.to_table(
+            first_row_is_head: expected_has_header[],
+            last_row_is_foot: !!expected_foot),
           html_table_to_array[]]
       end
     end

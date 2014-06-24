@@ -186,4 +186,39 @@ but found
 ++
 """)
   end
+
+  describe 'supports <tfoot>' do
+    it 'passing' do
+      expect {
+        expect(page).to include_table '#with-tfoot',
+          [%w( 1 2 ),
+           %w( 3 4 )],
+           %w( 5 6 )
+      }.to_not raise_error
+    end
+
+    it 'failing' do
+      expect {
+        expect(page).to include_table '#with-tfoot',
+          [%w( 1 2 ),
+           %w( 3 4 )],
+           %w( 5 7 )
+      }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
+"""expected to include table
++---+---+
+| 1 | 2 |
+| 3 | 4 |
++---+---+
+| 5 | 7 |
++---+---+
+but found
++---+---+
+| 1 | 2 |
+| 3 | 4 |
++---+---+
+| 5 | 6 |
++---+---+
+""")
+    end
+  end
 end
