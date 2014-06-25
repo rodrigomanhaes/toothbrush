@@ -165,6 +165,51 @@ but found
            %w(   0   Fluminense ),
            %w(   0    Botafogo  )]
     end
+
+    describe 'supports <tfoot>' do
+      it 'passing' do
+        expect {
+          expect(page).to include_table '#with-tfoot',
+            [%w( 1 2 3 ),
+             %w( 4 5 6 )],
+             %w( 7 8 9 )
+        }.to_not raise_error
+      end
+
+      it 'failing' do
+        expect {
+          expect(page).to include_table '#with-tfoot',
+            [%w( 1 2 3 ),
+             %w( 4 5 6 )],
+             %w( 7 8 0 )
+        }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
+  """expected to include table
++---+---+---+
+| 1 | 2 | 3 |
+| 4 | 5 | 6 |
++---+---+---+
+| 7 | 8 | 0 |
++---+---+---+
+but found
++---+---+---+
+| 1 | 2 | 3 |
+| 4 | 5 | 6 |
++---+---+---+
+| 7 | 8 | 9 |
++---+---+---+
+""")
+      end
+
+      it 'supports omitted columns' do
+        expect {
+          expect(page).to include_table '#with-tfoot-thead',
+             %w( First   Third ),
+            [%w(   1       3   ),
+             %w(   4       6   )],
+             %w(   7       9 )
+        }.to_not raise_error
+      end
+    end
   end
 
   it 'supports table having nothing inside' do
@@ -185,40 +230,5 @@ but found
 ++
 ++
 """)
-  end
-
-  describe 'supports <tfoot>' do
-    it 'passing' do
-      expect {
-        expect(page).to include_table '#with-tfoot',
-          [%w( 1 2 ),
-           %w( 3 4 )],
-           %w( 5 6 )
-      }.to_not raise_error
-    end
-
-    it 'failing' do
-      expect {
-        expect(page).to include_table '#with-tfoot',
-          [%w( 1 2 ),
-           %w( 3 4 )],
-           %w( 5 7 )
-      }.to raise_error(RSpec::Expectations::ExpectationNotMetError,
-"""expected to include table
-+---+---+
-| 1 | 2 |
-| 3 | 4 |
-+---+---+
-| 5 | 7 |
-+---+---+
-but found
-+---+---+
-| 1 | 2 |
-| 3 | 4 |
-+---+---+
-| 5 | 6 |
-+---+---+
-""")
-    end
   end
 end

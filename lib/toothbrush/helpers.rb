@@ -125,7 +125,14 @@ RSpec::Matchers.define :include_table do |selector, *header_content|
     check_foot = lambda do
       return true unless expected_foot
       return false if expected_foot && !has_tfoot[]
-      html_foot[] == expected_foot
+      if !column_equivalence.empty?
+        columns = column_equivalence.sort_by {|k, v| k }.map {|(k, v)| v }
+        foot_values = html_foot[]
+        foot_to_compare = columns.map {|index| foot_values[index] }
+      else
+        foot_to_compare = html_foot[]
+      end
+      foot_to_compare == expected_foot
     end
 
     result = check_selector[] && check_header[] && check_content[] && check_foot[]
